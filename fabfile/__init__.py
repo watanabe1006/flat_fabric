@@ -1,1 +1,1 @@
-import db
+import rds.postgresql
