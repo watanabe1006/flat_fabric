@@ -1,26 +1,48 @@
 # coding: UTF-8
 
-from fabric.api import local, lcd
+from fabric.api import env, local, lcd
 from fabric.decorators import task
+import os
 import datetime
 
-@task
-def backup(db_name, backup_dir="/backup"):
+def backup(db_name, user, backup_dir):
   """
-  backup:db_name=DB_NAME,backup_dir=BACKUP_DIR
+  backup:db_name, user, backup_dir
   """
   with lcd(backup_dir):
-    local("pwd")
-    _rds_env()
+    #local("pwd")
     # ファイル名はDB名 + 取得日
     d = datetime.datetime.today()
-    file_name = db_name + d.strftime("%Y_%m_%d") + ".dump"
-    command = "pg_dump -U " + rds_user + " -h " + rds_host + " " + db_name + " > " + backup_dir + "/" + file_name
+    file_name = db_name + "_" + d.strftime("%Y_%m_%d") + ".dump"
+    # 最終的にはバックアップ用ユーザーを作る
+    #command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
+    command = "pg_dump -U " + user + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
     print(command)
+    #local(command)
 
-def _rds_env():
-    global rds_host
-    global rds_user
+def _set_rds_env(data):
+  """
+  配列でもらったDBデータをenvにセットする
+  """
+  env.databases = []
+  for db in data:
+    #print db
+    env.databases.append({
+      "name": db[0],
+      "password": db[1]
+    })
+  #print env.databases
 
-    rds_host = "rds_host"
-    rds_user = "aipo001"
+def _set_pgpass(endpoint, port, db_name, user, password):
+  """
+  .pgpass作成
+  そのうち削除も作る
+  """
+  path = os.getenv("HOME") + "/.pgpass"
+  f = open(path, "w")
+  value = endpoint + ":" + port + ":" + db_name + ":" + user + ":" + password
+  f.write(value)
+  f.close
+
+  # 権限変更
+  os.chmod(path, 0600)
