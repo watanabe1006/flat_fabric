@@ -10,7 +10,8 @@ def backup(db_name, user, password, backup_dir='/backup'):
   backup:db_name, user, password, backup_dir
   """
   _set_env()
-  rds._set_pgpass(env.rds["endpoint"], env.rds["port"], db_name, user, password)
+  #rds._set_pgpass(env.rds["endpoint"], env.rds["port"], db_name, user, password)
+  rds._set_pgpass(env.rds["endpoint"], env.rds["port"], db_name, env.rds["user"], env.rds["password"])
   rds.backup(db_name, user, backup_dir=backup_dir)
 
 

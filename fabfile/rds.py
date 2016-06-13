@@ -15,8 +15,8 @@ def backup(db_name, user, backup_dir):
     d = datetime.datetime.today()
     file_name = db_name + "_" + d.strftime("%Y_%m_%d") + ".dump"
     # 最終的にはバックアップ用ユーザーを作る
-    #command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
-    command = "pg_dump -U " + user + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
+    command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
+    #command = "pg_dump -U " + user + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
     print(command)
     #local(command)
 
