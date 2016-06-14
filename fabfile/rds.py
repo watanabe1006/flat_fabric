@@ -13,10 +13,17 @@ def backup(db_name, user, backup_dir):
     #local("pwd")
     # ファイル名はDB名 + 取得日
     d = datetime.datetime.today()
-    file_name = db_name + "_" + d.strftime("%Y_%m_%d") + ".dump"
+    file_name = db_name + "_" + d.strftime("%Y%m%d") + ".dump"
+
+    # バックアップディレクトリ
+    path = backup_dir + "/"  + d.strftime("%Y%m%d")
+    if not os.path.isdir(path):
+      #print(path + " is not exists")
+      os.mkdir(path)
+
     # 最終的にはバックアップ用ユーザーを作る
-    command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
-    #command = "pg_dump -U " + user + " -h " + env.rds["endpoint"] + " " + db_name + " > " + backup_dir + "/" + file_name
+    #command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + path + "/" + file_name
+    command = "pg_dump -U " + user + " -h " + env.rds["endpoint"] + " " + db_name + " > " + path + "/" + file_name
     print(command)
     #local(command)
 
