@@ -1,5 +1,6 @@
 # coding: UTF-8
 
+from fabric.api import *
 import os
 import zipfile
 
@@ -14,3 +15,11 @@ def _archive(file_path):
   zip_file.close
   # 元ファイル削除
   os.remove(file_path)
+
+def _get_remote_file(target_path, local_path):
+  """
+  _get_remote_file:target_path, local_path
+  絶対パスで指定
+  ローカルのディレクトリ確認は面倒なのでしない
+  """
+  get(target_path, local_path)

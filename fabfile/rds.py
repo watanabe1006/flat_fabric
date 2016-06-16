@@ -5,6 +5,7 @@ from fabric.decorators import task
 import os
 import datetime
 from . import common
+from . import environment
 
 def backup(db_name, user, backup_dir):
   """
@@ -19,7 +20,7 @@ def backup(db_name, user, backup_dir):
     path = backup_dir + "/"  + db_name
     if not os.path.isdir(path):
       #print(path + " is not exists")
-      os.mkdir(path)
+      os.makedirs(path)
     file_path = path + "/" + file_name
     # 最終的にはバックアップ用ユーザーを作る
     #command = "pg_dump -U " + env.rds["user"] + " -h " + env.rds["endpoint"] + " " + db_name + " > " + path + "/" + file_name
@@ -32,7 +33,7 @@ def backup(db_name, user, backup_dir):
 
 def _db_list(list_file='../lists/db_list'):
   """
-  DBリストを読み込んで_set_rds_envに渡す
+  DBリストを読み込んでenvに設定
   パスは適当
   """
   d_list = list_file
@@ -46,19 +47,9 @@ def _db_list(list_file='../lists/db_list'):
   for db in items:
     env.databases.append({
       "name": db[0],
-      "password": db[1]
+      "password": db[1],
+      "backup": False
     })
-
-def _set_rds_env():
-  """
-  RDS環境設定
-  """
-  env.rds = {
-    "endpoint": "",
-    "user": "",
-    "password": "",
-    "port": ""
-  }
 
 def _set_pgpass(endpoint, port, db_name, user, password):
   """
